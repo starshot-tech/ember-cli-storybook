@@ -56,7 +56,10 @@ function removeRootURL(config) {
   // extract and parse the application config
   let appConfig = JSON.parse(decodeURIComponent(config.meta[0].content));
   let { rootURL } = appConfig;
-	if (!rootURL) return config;
+  if (!rootURL) return config;
+
+  rootURL = new RegExp(`^${rootURL}`);
+
 	config.script = config.script.map(s => {
 		s.src = s.src.replace(rootURL, './');
 		return s;
@@ -127,7 +130,7 @@ function generatePreviewHead(parsedConfig) {
         }
         doc.push(`<${key} ${objectToHTMLAttributes(value)}></${key}>`);
         if(value.src.indexOf('assets/vendor.js') > -1) {
-          // make sure we push this right after vendor to ensure the application does not bind to the window. 
+          // make sure we push this right after vendor to ensure the application does not bind to the window.
           doc.push('<script>runningTests = true; Ember.testing=true;</script>');
         }
       } else {
